@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { roomRouter } from "./room/index.js";
 import { userRouter } from "./user/index.js";
-import { friendRouter } from "./friendship/index.js";
+import { friendRouter } from "./friend/index.js";
 
 const appRouter = Router()
 

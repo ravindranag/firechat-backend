@@ -1,4 +1,4 @@
-import { createNewUser, generateToken, getUserByEmail, matchPassword, searchUser, userExistsByEmail } from "./repository.js"
+import { createNewUser, generateToken, getUserByEmail, getUserProfile, matchPassword, searchUser, userExistsByEmail } from "./repository.js"
 
 /**
  * 
@@ -73,4 +73,23 @@ export const searchUserController = async (req, res, next) => {
 	const { q } = req.query
 	const results = await searchUser(q, userId)
 	res.json(results)
+}
+
+
+/**
+ * 
+ * @param {import("express").Request} req 
+ * @param {import("express").Response} res 
+ * @param {import("express").NextFunction} next 
+ */
+export const userProfileController = async (req, res, next) => {
+	const { locals: { decoded: { userId } } } = req
+	try {
+		const profile = await getUserProfile(userId)
+		return res.json(profile)
+	}
+	catch(err) {
+		console.log(err)
+		return res.status(500).json('Server Error')
+	}
 }

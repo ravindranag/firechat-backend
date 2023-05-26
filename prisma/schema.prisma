@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,40 +7,43 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum FriendStatus {
-	PENDING
-	CONFIRMED
-}
-
 model PublicRoom {
-	id String @id @default(uuid())
-	name String
-	chats PublicChat[]
+  id    String       @id @default(uuid())
+  name  String
+  chats PublicChat[]
 }
 
 model PublicChat {
-	id String @id @default(uuid())
-	content String
-	from String
-	sentAt DateTime @default(now())
-	roomId String
-	room PublicRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  id      String     @id @default(uuid())
+  content String
+  from    String
+  sentAt  DateTime   @default(now())
+  roomId  String
+  room    PublicRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
 }
 
 model User {
-	id String @id @default(cuid())
-	name String
-	username String @unique
-	email String @unique
-	password String
-	avatar String?
-	friends Friend[]
+  id             String   @id @default(cuid())
+  name           String
+  username       String   @unique
+  email          String   @unique
+  password       String
+  avatar         String?
+  friendRequests Friend[] @relation("friend_requests")
+  friends        Friend[] @relation("friends")
 }
 
 model Friend {
-	id String @id @default(cuid())
-	friendId String
-	friend User @relation(fields: [friendId], references: [id], onDelete: Cascade)
-	status FriendStatus @default(PENDING)
+  userId   String
+  friendId String
+  status   FriendStatus @default(PENDING)
+  friend   User         @relation("friend_requests", fields: [friendId], references: [id], onDelete: Cascade)
+  user     User         @relation("friends", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, friendId])
 }
 
+enum FriendStatus {
+  PENDING
+  CONFIRMED
+}

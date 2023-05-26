@@ -1,6 +1,8 @@
 import bcrypt from 'bcrypt'
 import db from '../../lib/prisma/init.js'
 import jwt from 'jsonwebtoken'
+import { SELECT_USER_FRIEND, SELECT_USER_FRIEND_REQUESTS } from '../../lib/prisma/select.js'
+import { FriendStatus } from '@prisma/client'
 
 const saltRounds = 10
 const JWT_SECRET = process.env.JWT_SECRET
@@ -87,6 +89,20 @@ export const searchUser = (nameLike, userId) => {
 			name: true,
 			username: true,
 			avatar: true
+		}
+	})
+}
+
+export const getUserProfile = (userId) => {
+	return db.user.findFirstOrThrow({
+		where: {
+			id: userId,
+		},
+		select: {
+			id: true,
+			name: true,
+			email: true,
+			username: true
 		}
 	})
 }
