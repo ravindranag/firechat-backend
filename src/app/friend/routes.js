@@ -8,8 +8,8 @@ router.use(verifyUserMiddleware)
 
 router.get('/', getFriendsController)
 router.post('/request/:friendId', createFriendRequestController)
+router.delete('/request/delete/:userId/:friendId', deleteFriendRequestController)
 router.get('/request', getFriendRequestsForUserController)
 router.get('/accept/:userId/:friendId', acceptFriendRequestController)
-router.delete('/delete/:userId/:friendId', deleteFriendRequestController)
 
 export default router

@@ -7,30 +7,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model PublicRoom {
-  id    String       @id @default(uuid())
-  name  String
-  chats PublicChat[]
-}
-
-model PublicChat {
-  id      String     @id @default(uuid())
-  content String
-  from    String
-  sentAt  DateTime   @default(now())
-  roomId  String
-  room    PublicRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
-}
-
 model User {
-  id             String   @id @default(cuid())
+  id             String        @id @default(cuid())
   name           String
-  username       String   @unique
-  email          String   @unique
+  username       String        @unique
+  email          String        @unique
   password       String
   avatar         String?
-  friendRequests Friend[] @relation("friend_requests")
-  friends        Friend[] @relation("friends")
+  friendRequests Friend[]      @relation("friend_requests")
+  friends        Friend[]      @relation("friends")
+  rooms          UsersInRoom[]
+  chatSent       Chat[]        @relation("chat_sender")
+  chatReceived   Chat[]        @relation("chat_receiver")
 }
 
 model Friend {
@@ -46,4 +34,31 @@ model Friend {
 enum FriendStatus {
   PENDING
   CONFIRMED
+}
+
+model UsersInRoom {
+  userId String
+  roomId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room   Room   @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roomId])
+}
+
+model Room {
+  id    String        @id @default(uuid())
+  users UsersInRoom[]
+  chats Chat[]
+}
+
+model Chat {
+  id         String   @id @default(cuid())
+  message    String
+  createdAt  DateTime @default(now())
+  senderId   String
+  receiverId String
+  roomId     String
+  room       Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  sender     User     @relation("chat_sender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver   User     @relation("chat_receiver", fields: [receiverId], references: [id], onDelete: Cascade)
 }
