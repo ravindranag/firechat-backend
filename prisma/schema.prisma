@@ -1,0 +1,48 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum FriendStatus {
+	PENDING
+	CONFIRMED
+}
+
+model PublicRoom {
+	id String @id @default(uuid())
+	name String
+	chats PublicChat[]
+}
+
+model PublicChat {
+	id String @id @default(uuid())
+	content String
+	from String
+	sentAt DateTime @default(now())
+	roomId String
+	room PublicRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+}
+
+model User {
+	id String @id @default(cuid())
+	name String
+	email String @unique
+	password String
+	avatar String?
+	friends Friend[]
+}
+
+model Friend {
+	id String @id @default(cuid())
+	friendId String
+	friend User @relation(fields: [friendId], references: [id], onDelete: Cascade)
+	status FriendStatus @default(PENDING)
+}
+

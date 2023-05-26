@@ -1,0 +1,1 @@
+export { default as friendRouter } from './routes.js'
