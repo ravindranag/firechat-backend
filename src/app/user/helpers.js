@@ -1,4 +1,4 @@
-import { verifyToken } from "./repository.js"
+import { getUserById, verifyToken } from "./repository.js"
 
 /**
  * 
@@ -6,7 +6,7 @@ import { verifyToken } from "./repository.js"
  * @param {import("express").Response} res 
  * @param {import("express").NextFunction} next 
  */
-export const verifyUserMiddleware = (req, res, next) => {
+export const verifyUserMiddleware = async (req, res, next) => {
 	const token = req.headers.authorization
 	if(!token) {
 		res.status(403).json('No token provided')
@@ -14,8 +14,10 @@ export const verifyUserMiddleware = (req, res, next) => {
 	else {
 		try {
 			const payload = verifyToken(token)
+			const requestingUser = await getUserById(payload.userId)
 			req.locals = {
-				decoded: payload
+				decoded: payload,
+				requestingUser
 			}
 			next()
 		}

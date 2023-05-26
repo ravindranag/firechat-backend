@@ -39,7 +39,9 @@ export const userLoginController = async (req, res, next) => {
 		else {
 			const token = generateToken({
 				userId: user.id,
-				name: user.name
+				name: user.name,
+				username: user.username,
+				avatar: user.avatar
 			})
 			return res.json(token)
 		}

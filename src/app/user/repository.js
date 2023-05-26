@@ -48,6 +48,14 @@ export const getUserByEmail = (email) => {
 	})
 }
 
+export const getUserById = (userId) => {
+	return db.user.findFirstOrThrow({
+		where: {
+			id: userId
+		}
+	})
+}
+
 export const generateToken = (payload) => {
 	return jwt.sign(payload, JWT_SECRET, {
 		algorithm: 'HS256',

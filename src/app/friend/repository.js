@@ -1,6 +1,7 @@
 import db from "../../lib/prisma/init.js"
 import { FriendStatus } from '@prisma/client'
 import { SELECT_USER_FRIEND_REQUESTS } from "../../lib/prisma/select.js"
+import { deleteRoom, findRoomId } from "../room/repository.js"
 
 /**
  * 
@@ -68,16 +69,32 @@ export const getFriendRequestsForUser = (userId) => {
 }
 
 export const acceptFriendRequest = async (userId, friendId) => {
-	return createFriend(friendId, userId, FriendStatus.CONFIRMED)
-		.then(() => db.friend.update({
-			where: {
-				userId_friendId: {
-					userId: userId,
-					friendId: friendId	
-				}
-			},
+	return db.friend.update({
+		where: {
+			userId_friendId: {
+				userId: userId,
+				friendId: friendId	
+			}
+		},
+		data: {
+			status: FriendStatus.CONFIRMED
+		}
+	})
+		.then(() => createFriend(friendId, userId, FriendStatus.CONFIRMED))
+		.then(() => db.room.create({
 			data: {
-				status: FriendStatus.CONFIRMED
+				users: {
+					createMany: {
+						data: [
+							{
+								userId: userId
+							},
+							{
+								userId: friendId
+							}
+						]
+					}
+				}
 			}
 		}))
 }
@@ -91,4 +108,12 @@ export const deleteFriendRequest = (userId, friendId) => {
 			}
 		}
 	})
+}
+
+
+export const deleteFriend = async (userId, friendId) => {
+	return deleteFriendRequest(userId, friendId)
+		.then(() => deleteFriendRequest(friendId, userId))
+		.then(() => findRoomId(userId, friendId))
+		.then(roomId => deleteRoom(roomId))
 }

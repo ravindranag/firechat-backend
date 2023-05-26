@@ -1,4 +1,4 @@
-import { acceptFriendRequest, createFriend, deleteFriendRequest, getFriendRequestsForUser, getFriendsByUser } from "./repository.js"
+import { acceptFriendRequest, createFriend, deleteFriend, deleteFriendRequest, getFriendRequestsForUser, getFriendsByUser } from "./repository.js"
 
 /**
  * 
@@ -63,7 +63,8 @@ export const acceptFriendRequestController = async (req, res, next) => {
 		return res.json('Friend request accepted')
 	}
 	catch(err) {
-		return res.status(500).json('Server error')
+		console.log(err)
+		return res.sendStatus(400)
 	}
 }
 
@@ -90,3 +91,22 @@ export const deleteFriendRequestController = async (req, res, next) => {
 		}
 	}
 }
+
+
+/**
+ * 
+ * @param {import("express").Request} req 
+ * @param {import("express").Response} res 
+ * @param {import("express").NextFunction} next 
+ */
+export const deleteFriendController = async (req, res, next) => {
+	const { userId, friendId } = req.params
+	try {
+		await deleteFriend(userId, friendId)
+		return res.json('Friend removed')
+	}
+	catch(err) {
+		console.log(err)
+		return res.sendStatus(400)
+	}
+}	
