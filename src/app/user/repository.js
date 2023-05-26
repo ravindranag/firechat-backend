@@ -29,6 +29,15 @@ export const userExistsByEmail = async (email) => {
 	return count > 0 ? true : false
 }
 
+export const userExistsById = async (id) => {
+	let count = await db.user.count({
+		where: {
+			id: id
+		}
+	})
+	return count > 0 ? true : false
+}
+
 export const getUserByEmail = (email) => {
 	return db.user.findFirstOrThrow({
 		where: {
@@ -48,4 +57,36 @@ export const generateToken = (payload) => {
 
 export const verifyToken = (token) => {
 	return jwt.verify(token, JWT_SECRET)
+}
+
+export const searchUser = (nameLike, userId) => {
+	return db.user.findMany({
+		where: {
+			OR: [
+				{
+					name: {
+						startsWith: nameLike,
+						mode: 'insensitive'
+					}
+				},
+				{
+					username: {
+						startsWith: nameLike,
+						mode: 'insensitive'
+					}
+				}
+			],
+			NOT: {
+				id: {
+					equals: userId,
+				}
+			}
+		},
+		select: {
+			id: true,
+			name: true,
+			username: true,
+			avatar: true
+		}
+	})
 }

@@ -11,14 +11,16 @@ export const verifyUserMiddleware = (req, res, next) => {
 	if(!token) {
 		res.status(403).json('No token provided')
 	}
-	try {
-		const payload = verifyToken(token)
-		req.locals = {
-			decoded: payload
+	else {
+		try {
+			const payload = verifyToken(token)
+			req.locals = {
+				decoded: payload
+			}
+			next()
 		}
-		next()
-	}
-	catch(err) {
-		res.status(403).json('Invalid token')
+		catch(err) {
+			res.status(403).json('Invalid token')
+		}
 	}
 }

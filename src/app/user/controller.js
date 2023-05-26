@@ -1,4 +1,4 @@
-import { createNewUser, generateToken, getUserByEmail, matchPassword, userExistsByEmail } from "./repository.js"
+import { createNewUser, generateToken, getUserByEmail, matchPassword, searchUser, userExistsByEmail } from "./repository.js"
 
 /**
  * 
@@ -60,4 +60,17 @@ export const userLoginController = async (req, res, next) => {
 export const userVerifyController = async (req, res, next) => {
 	const { locals: { decoded } } = req
 	res.json(decoded)
+}
+
+/**
+ * 
+ * @param {import("express").Request} req 
+ * @param {import("express").Response} res 
+ * @param {import("express").NextFunction} next 
+ */
+export const searchUserController = async (req, res, next) => {
+	const { locals: { decoded: { userId } } } = req
+	const { q } = req.query
+	const results = await searchUser(q, userId)
+	res.json(results)
 }
