@@ -23,7 +23,8 @@ export const io = new Server(server, {
 	cors: {
 		origin: '*'
 	},
-	path: '/room/'
+	path: '/room',
+	addTrailingSlash: false
 })
 
 io.on('connection', onConnection)

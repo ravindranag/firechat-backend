@@ -10,6 +10,7 @@ import registerRoomHandlers from "./room.js"
  */
 export const onConnection = (socket) => {
 	console.log('User connected', socket.id)
+	console.log(socket.handshake.auth)
 	registerChatHandlers(io, socket)
 	registerRoomHandlers(io, socket)
 }

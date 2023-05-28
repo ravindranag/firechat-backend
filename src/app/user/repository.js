@@ -75,22 +75,40 @@ export const searchUser = (nameLike, userId) => {
 			OR: [
 				{
 					name: {
-						startsWith: nameLike,
+						contains: nameLike,
 						mode: 'insensitive'
 					}
 				},
 				{
 					username: {
-						startsWith: nameLike,
+						contains: nameLike,
 						mode: 'insensitive'
 					}
 				}
 			],
 			NOT: {
-				id: {
-					equals: userId,
-				}
-			}
+				OR: [
+					{
+						id: {
+							equals: userId
+						}
+					},
+					{
+						friends: {
+							some: {
+								friendId: userId
+							}
+						}
+					},
+					{
+						friendRequests: {
+							some: {
+								userId: userId
+							}
+						}
+					}
+				]
+			},
 		},
 		select: {
 			id: true,

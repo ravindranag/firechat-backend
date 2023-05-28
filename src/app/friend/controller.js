@@ -78,7 +78,7 @@ export const acceptFriendRequestController = async (req, res, next) => {
 export const deleteFriendRequestController = async (req, res, next) => {
 	const requestingUserId = req.locals.decoded.userId
 	const { userId, friendId } = req.params
-	if(requestingUserId !== friendId) {
+	if(requestingUserId !== userId && requestingUserId !== friendId) {
 		return res.sendStatus(403)
 	}
 	else {

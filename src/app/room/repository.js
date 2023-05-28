@@ -10,6 +10,7 @@ export const getUserRoom = (userId) => {
 						select: {
 							user: {
 								select: {
+									id: true,
 									username: true,
 									name: true,
 									avatar: true
@@ -46,7 +47,7 @@ export const getRecentRoomChat = (roomId, userId) => {
 			]
 		},
 		orderBy: {
-			createdAt: 'desc'
+			createdAt: 'asc'
 		}
 	})
 }
@@ -93,4 +94,31 @@ export const findRoomId = async (userId, friendId) => {
 		}
 	})
 		.then(users => users[0].roomId)
+}
+
+
+/**
+ * 
+ * @param {string} roomId 
+ * @param {string} senderId 
+ * @param {string} receiverId 
+ * @param {string} message 
+ * @returns 
+ */
+export const saveChatToRoom = async (roomId, senderId, receiverId, message) => {
+	return db.chat.create({
+		data: {
+			message: message,
+			roomId: roomId,
+			senderId: senderId,
+			receiverId: receiverId
+		},
+		select: {
+			id: true,
+			message: true,
+			senderId: true,
+			receiverId: true,
+			createdAt: true
+		}
+	})
 }
